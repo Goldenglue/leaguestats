@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -43,8 +43,11 @@ public class LoLAPI {
         return null;
     }
 
-    public static String getSummonerIdFromJsonNode(JsonNode node) {
-        return "Summoner id: " + node.get("id").asText();
+    public static JsonNode getSummonerInfo(String name) {
+        name = name.replaceAll(" ", "");
+        JsonNode rootNode = getJsonNodeFromResponse("https://euw1.api.riotgames.com/lol/summoner/v3/summoners/by-name/" + name);
+        PrettyPrinter.prettyPrintJSonNode(rootNode);
+        return rootNode;
     }
 
     public static Map<String, String> getChampionIdToName() {
@@ -53,10 +56,17 @@ public class LoLAPI {
                 .collect(Collectors.toMap(node -> node.get("name").asText(), node -> node.get("id").asText()));
     }
 
-    public static String getSummonerInfo(String name) {
-        name = name.replaceAll(" ","");
-        JsonNode rootNode = getJsonNodeFromResponse("https://euw1.api.riotgames.com/lol/summoner/v3/summoners/by-name/" + name);
+    public static List<String> getMatchesIdByAccountIdAndChampion(String accountId, String championId) {
+        JsonNode rootNode = getJsonNodeFromResponse("https://euw1.api.riotgames.com/lol/match/v3/matchlists/by-account/"+ accountId + "?queue=420&champion=" + championId);
         PrettyPrinter.prettyPrintJSonNode(rootNode);
-        return rootNode.get("accountId").asText();
+        JsonNode childNode = rootNode.get("matches");
+        List<String> setOfId = new ArrayList<>();
+        childNode.forEach(node -> setOfId.add(node.get("gameId").asText()));
+        return setOfId;
+
+    }
+
+    public static JsonNode getMatchById(String id) {
+        return getJsonNodeFromResponse("https://euw1.api.riotgames.com/lol/match/v3/matches/" + id);
     }
 }

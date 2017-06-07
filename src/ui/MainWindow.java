@@ -1,6 +1,7 @@
 package ui;
 
 import LoLAPI.*;
+import Statistics.DataProcessor;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -57,8 +58,9 @@ public class MainWindow {
 
         btn.setOnAction(e -> {
             actiontarget.setFill(Color.BLACK);
+
             //actiontarget.setText("Summoner id: " + LoLAPI.getSummonerInfo(summonerName.getText()));
-            actiontarget.setText(StaticData.getChampionId(championName.getText()));
+            actiontarget.setText(DataProcessor.getKDA(summonerName.getText(), championName.getText()));
         });
 
         Scene scene = new Scene(grid, 300, 275);
