@@ -19,20 +19,26 @@ public class DataProcessor {
         Map<String, String> mapOfInfoFromSingleMatch = new HashMap<>();
         JsonNode matchStats = getMatchJson(name, champion);
         PrettyPrinter.prettyPrintJSonNode(matchStats);
-        mapOfInfoFromSingleMatch.put("kda", getKDA(matchStats));
+        mapOfInfoFromSingleMatch.putAll(getCombatStats(matchStats.get("stats")));
         return mapOfInfoFromSingleMatch;
     }
 
-    private static String getKDA(JsonNode rootNode) {
+    private static Map<String, String> getCombatStats(JsonNode rootNode) {
+        Map<String, String> mapOfCombatStats = new HashMap<>();
         double kills = rootNode.get("kills").asDouble();
         double deaths = rootNode.get("deaths").asDouble();
         double assists = rootNode.get("assists").asDouble();
         String KDA = String.valueOf(((kills + assists) / deaths));
         if (KDA.length() > 4) {
-            return KDA.substring(0,4);
-        } else {
-            return KDA;
+            KDA = KDA.substring(0,5);
         }
+        mapOfCombatStats.put("kda", KDA);
+        mapOfCombatStats.put("physicalDamageDealt", rootNode.get("physicalDamageDealt").asText());
+        mapOfCombatStats.put("magicDamageDealt", rootNode.get("magicDamageDealt").asText());
+        mapOfCombatStats.put("totalDamageDealt", rootNode.get("totalDamageDealt").asText());
+        mapOfCombatStats.put("magicDamageDealtToChampions", rootNode.get("magicDamageDealtToChampions").asText());
+        mapOfCombatStats.put("physicalDamageDealtToChampions", rootNode.get("physicalDamageDealtToChampions").asText());
+        return mapOfCombatStats;
     }
 
     private static JsonNode getMatchJson(String name, String champion) {
@@ -44,6 +50,6 @@ public class DataProcessor {
                 .filter(node -> node.get("player").get("currentAccountId").equals(summonerInfo.get("accountId")))
                 .mapToInt(node -> node.get("participantId").asInt())
                 .sum();
-        return matchInfo.get("participants").get(participantId - 1).get("stats");
+        return matchInfo.get("participants").get(participantId - 1);
     }
 }
