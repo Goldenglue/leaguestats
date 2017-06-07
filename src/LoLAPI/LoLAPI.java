@@ -11,7 +11,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -50,14 +52,9 @@ public class LoLAPI {
         return rootNode;
     }
 
-    public static Map<String, String> getChampionIdToName() {
-        JsonNode rootNode = getJsonNodeFromResponse("https://euw1.api.riotgames.com/lol/static-data/v3/champions?dataById=true");
-        return StreamSupport.stream(rootNode.get("data").spliterator(), false)
-                .collect(Collectors.toMap(node -> node.get("name").asText(), node -> node.get("id").asText()));
-    }
 
     public static List<String> getMatchesIdByAccountIdAndChampion(String accountId, String championId) {
-        JsonNode rootNode = getJsonNodeFromResponse("https://euw1.api.riotgames.com/lol/match/v3/matchlists/by-account/"+ accountId + "?queue=420&champion=" + championId);
+        JsonNode rootNode = getJsonNodeFromResponse("https://euw1.api.riotgames.com/lol/match/v3/matchlists/by-account/" + accountId + "?queue=420&champion=" + championId);
         PrettyPrinter.prettyPrintJSonNode(rootNode);
         JsonNode childNode = rootNode.get("matches");
         List<String> setOfId = new ArrayList<>();
@@ -69,4 +66,17 @@ public class LoLAPI {
     public static JsonNode getMatchById(String id) {
         return getJsonNodeFromResponse("https://euw1.api.riotgames.com/lol/match/v3/matches/" + id);
     }
+
+    static Map<String, String> getChampionIdToName() {
+        JsonNode rootNode = getJsonNodeFromResponse("https://euw1.api.riotgames.com/lol/static-data/v3/champions?dataById=true");
+        return StreamSupport.stream(rootNode.get("data").spliterator(), false)
+                .collect(Collectors.toMap(node -> node.get("name").asText(), node -> node.get("id").asText()));
+    }
+
+    static Map<String, String> getItemIdToItemImage() {
+        JsonNode rootNode = getJsonNodeFromResponse("https://euw1.api.riotgames.com/lol/static-data/v3/items?itemListData=image");
+        return StreamSupport.stream(rootNode.get("data").spliterator(), false)
+                .collect(Collectors.toMap(node -> node.get("id").asText(), node -> node.get("image").get("full").asText()));
+    }
+
 }

@@ -6,7 +6,7 @@ import javafx.stage.Stage;
 public class LeagueStats extends Application {
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) throws Exception {
         ui.MainWindow.launch(primaryStage);
     }
 
