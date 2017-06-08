@@ -45,27 +45,21 @@ public class DataProcessor {
             KDA = KDA.substring(0, 5);
         }
         mapOfCombatStats.put("kda", KDA);
-        Iterator<String> iterator = rootNode.fieldNames();
-        while (iterator.hasNext()) {
-            String currentValue = iterator.next();
-            if ((setOfDesirableStats.contains(currentValue))) {
-                System.out.println(currentValue);
-                mapOfCombatStats.put(currentValue, rootNode.get(currentValue).asText());
+        rootNode.fieldNames().forEachRemaining(node -> {
+            if (setOfDesirableStats.contains(node)) {
+                mapOfCombatStats.put(node, rootNode.get(node).asText());
             }
-        }
+        });
         return mapOfCombatStats;
     }
 
     private static Map<String, String> getItems(JsonNode rootNode) {
         Map<String, String> mapOfItems = new HashMap<>();
-        Iterator<String> iterator = rootNode.fieldNames();
-        while (iterator.hasNext()) {
-            String currentValue = iterator.next();
-            if ((setOfDesirableItems.contains(currentValue))) {
-                System.out.println(currentValue);
-                mapOfItems.put(currentValue, rootNode.get(currentValue).asText());
+        rootNode.fieldNames().forEachRemaining(node -> {
+            if (setOfDesirableItems.contains(node)) {
+                mapOfItems.put(node, rootNode.get(node).asText());
             }
-        }
+        });
         return mapOfItems;
     }
 
