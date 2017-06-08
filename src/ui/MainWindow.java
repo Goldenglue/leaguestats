@@ -20,6 +20,7 @@ import javafx.stage.Stage;
 import util.PrettyPrinter;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -27,35 +28,21 @@ import java.util.Set;
  * Created by IvanOP on 07.06.2017.
  */
 public class MainWindow {
-    //private static Image square1 = new Image("http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/Aatrox.png");
-    //private static Image square2 = new Image("http://ddragon.leagueoflegends.com/cdn/6.24.1/img/champion/Vi.png");
-    static ImageView imageView = new ImageView();
-    static ImageView item0 = new ImageView();
-    static ImageView item1 = new ImageView();
-    static ImageView item2 = new ImageView();
-    static ImageView item3 = new ImageView();
-    static ImageView item4 = new ImageView();
-    static ImageView item5 = new ImageView();
-    static ImageView item6 = new ImageView();
-    static Set<ImageView> setOfItemsImages = new HashSet<>();
-    static {
-        setOfItemsImages.add(item0);
-        setOfItemsImages.add(item1);
-        setOfItemsImages.add(item2);
-        setOfItemsImages.add(item3);
-        setOfItemsImages.add(item4);
-        setOfItemsImages.add(item5);
-        setOfItemsImages.add(item6);
-
-    }
+    private static ImageView imageView = new ImageView();
+    private static ImageView item0 = new ImageView();
+    private static ImageView item1 = new ImageView();
+    private static ImageView item2 = new ImageView();
+    private static ImageView item3 = new ImageView();
+    private static ImageView item4 = new ImageView();
+    private static ImageView item5 = new ImageView();
+    private static ImageView item6 = new ImageView();
+    private static Text win;
 
 
     public static void launch(Stage primaryStage) {
-
-
         primaryStage.setTitle("League statistics");
         GridPane grid = new GridPane();
-        grid.setAlignment(Pos.CENTER);
+        grid.setAlignment(Pos.TOP_CENTER);
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
@@ -85,11 +72,68 @@ public class MainWindow {
         final Text actionTarget = new Text();
         grid.add(actionTarget, 0, 3);
 
+        win = new Text();
+        grid.add(win, 0,8);
+
+        final Text kills = new Text();
+        grid.add(kills, 1,8);
+
+        final Text deaths = new Text();
+        grid.add(deaths, 2,8);
+
+        final Text assists = new Text();
+        grid.add(assists, 0,9);
+
+        final Text totalDamageDealtToChampions = new Text();
+        grid.add(totalDamageDealtToChampions, 1,9);
+
+        final Text magicDamageDealtToChampions = new Text();
+        grid.add(magicDamageDealtToChampions, 2,9);
+
+        final Text trueDamageDealtToChampions = new Text();
+        grid.add(trueDamageDealtToChampions, 0,10);
+
+        final Text visionScore = new Text();
+        grid.add(visionScore, 1,10);
+
+        final Text goldEarned = new Text();
+        grid.add(goldEarned, 2,10);
+
+        final Text totalMinionsKilled = new Text();
+        grid.add(totalMinionsKilled, 0,11);
+
+        final Text neutralMinionsKilled = new Text();
+        grid.add(neutralMinionsKilled, 1,11);
+
+        final Text neutralMinionsKilledTeamJungle = new Text();
+        grid.add(neutralMinionsKilledTeamJungle, 2,11);
+
+        final Text neutralMinionsKilledEnemyJungle = new Text();
+        grid.add(neutralMinionsKilledEnemyJungle, 0,12);
+
+        final Text wardsPlaced = new Text();
+        grid.add(wardsPlaced, 1,12);
+
         btn.setOnAction(e -> {
             setChampionImage(championName.getText());
             actionTarget.setFill(Color.BLACK);
-            //actionTarget.setText("KDA is: " + DataProcessor.getInfo(summonerName.getText(), championName.getText()));
-            actionTarget.setText("some very long text");
+            Map<String, String> info = DataProcessor.getInfo(summonerName.getText(), championName.getText());
+            setItemsFromIds(info);
+            actionTarget.setText("KDA is: " + info.get("kda"));
+            win.setText("Win: " + info.get("win"));
+            kills.setText("Kills: " + info.get("kills"));
+            deaths.setText("Deaths: " + info.get("deaths"));
+            assists.setText("Assists: " + info.get("assists"));
+            totalDamageDealtToChampions.setText("Total damage dealt to champions: " + info.get("totalDamageDealtToChampions"));
+            magicDamageDealtToChampions.setText("Magic damage dealt to champions: " + info.get("magicDamageDealtToChampions"));
+            trueDamageDealtToChampions.setText("True Damage dealt to champions: " + info.get("trueDamageDealtToChampions"));
+            visionScore.setText("Vision score: " + info.get("visionScore"));
+            goldEarned.setText("Gold earned: " + info.get("goldEarned"));
+            totalMinionsKilled.setText("Minions killed: " + info.get("totalMinionsKilled"));
+            neutralMinionsKilled.setText("Neutral minions killed: " + info.get("neutralMinionsKilled"));
+            neutralMinionsKilledTeamJungle.setText("Neutral minions killed from team jungle: " + info.get("neutralMinionsKilledTeamJungle"));
+            neutralMinionsKilledEnemyJungle.setText("Neutral minions killed from enemy jungle: " + info.get("neutralMinionsKilledEnemyJungle"));
+            wardsPlaced.setText("Wards placed: " + info.get("wardsPlaced"));
 
         });
 
@@ -100,22 +144,22 @@ public class MainWindow {
         grid.add(item3,0,6);
         grid.add(item4,1,6);
         grid.add(item5,2,6);
-        grid.add(item6,2,6);
-
+        grid.add(item6,0,7);
 
         Scene scene = new Scene(grid, 600, 600);
+
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
-    private static void setItemsFromIds(String[] imageId) {
-        int id = 0;
-        for (ImageView item : setOfItemsImages) {
-            item.setImage(new Image("http://ddragon.leagueoflegends.com/cdn/6.24.1/img/item/" + imageId[id++]));
-            item.setPreserveRatio(true);
-            item.setSmooth(true);
-            item.setCache(true);
-        }
+    private static void setItemsFromIds(Map<String, String> info) {
+        item0.setImage(new Image("http://ddragon.leagueoflegends.com/cdn/6.24.1/img/item/" + info.get("item0") + ".png"));
+        item1.setImage(new Image("http://ddragon.leagueoflegends.com/cdn/6.24.1/img/item/" + info.get("item1") + ".png"));
+        item2.setImage(new Image("http://ddragon.leagueoflegends.com/cdn/6.24.1/img/item/" + info.get("item2") + ".png"));
+        item3.setImage(new Image("http://ddragon.leagueoflegends.com/cdn/6.24.1/img/item/" + info.get("item3") + ".png"));
+        item4.setImage(new Image("http://ddragon.leagueoflegends.com/cdn/6.24.1/img/item/" + info.get("item4") + ".png"));
+        item5.setImage(new Image("http://ddragon.leagueoflegends.com/cdn/6.24.1/img/item/" + info.get("item5") + ".png"));
+        item6.setImage(new Image("http://ddragon.leagueoflegends.com/cdn/6.24.1/img/item/" + info.get("item6") + ".png"));
 
     }
 

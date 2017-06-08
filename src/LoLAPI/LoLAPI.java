@@ -55,7 +55,9 @@ public class LoLAPI {
 
     public static List<String> getMatchesIdByAccountIdAndChampion(String accountId, String championId) {
         JsonNode rootNode = getJsonNodeFromResponse("https://euw1.api.riotgames.com/lol/match/v3/matchlists/by-account/" + accountId + "?queue=420&champion=" + championId);
-        PrettyPrinter.prettyPrintJSonNode(rootNode);
+        if (rootNode == null) {
+            return null;
+        }
         JsonNode childNode = rootNode.get("matches");
         List<String> setOfId = new ArrayList<>();
         childNode.forEach(node -> setOfId.add(node.get("gameId").asText()));
